@@ -58,8 +58,8 @@ public class PortletFactoryGenerated implements PortletFactory {
             addPortlet(
                     new PortletDescriptor(
                             new PortletId("$desc.getId()"),
-                            "$desc.getTitle()",
-                            "$desc.getTooltip()"),
+                            "$desc.getEscapedTitle()",
+                            "$desc.getEscapedTooltip()"),
                     providerOf_$desc.getSimpleName());
 
         #end

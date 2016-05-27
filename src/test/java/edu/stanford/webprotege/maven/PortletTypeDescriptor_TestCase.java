@@ -21,8 +21,8 @@ public class PortletTypeDescriptor_TestCase {
     private String simpleName = "The simpleName";
     private String packageName = "The packageName";
     private String id = "The id";
-    private String title = "The title";
-    private String tooltip = "The tooltip";
+    private String title = "The \\u000Atitle";
+    private String tooltip = "The \\u000tooltip";
 
     @Before
     public void setUp()
@@ -80,6 +80,10 @@ public class PortletTypeDescriptor_TestCase {
         assertThat(portletTypeDescriptor.getTitle(), is(this.title));
     }
 
+    public void shouldReturnEscaped_title() {
+        assertThat(portletTypeDescriptor.getEscapedTitle(), is("The \ntitle"));
+    }
+
     @Test(expected = NullPointerException.class)
     public void shouldThrowNullPointerExceptionIf_tooltip_IsNull() {
         new PortletTypeDescriptor(canonicalClassName, simpleName, packageName, id, title, null);
@@ -88,6 +92,10 @@ public class PortletTypeDescriptor_TestCase {
     @Test
     public void shouldReturnSupplied_tooltip() {
         assertThat(portletTypeDescriptor.getTooltip(), is(this.tooltip));
+    }
+
+    public void shouldReturnEscapted_tooltip() {
+        assertThat(portletTypeDescriptor.getTooltip(), is("The \ntooltip"));
     }
 
     @Test

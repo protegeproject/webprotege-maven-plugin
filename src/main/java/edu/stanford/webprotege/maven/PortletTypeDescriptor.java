@@ -1,6 +1,7 @@
 package edu.stanford.webprotege.maven;
 
 import com.google.common.base.Objects;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import java.util.Comparator;
 
@@ -94,11 +95,27 @@ public class PortletTypeDescriptor implements Comparable<PortletTypeDescriptor> 
     }
 
     /**
+     * Gets the title escaped as a Java source code string.
+     * @return The escaped title.
+     */
+    public String getEscapedTitle() {
+        return StringEscapeUtils.escapeJava(title);
+    }
+
+    /**
      * Gets the tooltip of the portlet.
      * @return The portlet tooltip.  Not {@code null}.
      */
     public String getTooltip() {
         return tooltip;
+    }
+
+    /**
+     * Gets the tooltip escaped as a Java source code string.
+     * @return The escaped tooltip.
+     */
+    public String getEscapedTooltip() {
+        return StringEscapeUtils.escapeJava(tooltip);
     }
 
     @Override
