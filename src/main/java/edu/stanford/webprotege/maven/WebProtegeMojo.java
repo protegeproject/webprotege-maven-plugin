@@ -2,10 +2,6 @@ package edu.stanford.webprotege.maven;
 
 import com.google.common.base.Charsets;
 import com.thoughtworks.qdox.JavaProjectBuilder;
-import com.thoughtworks.qdox.model.JavaAnnotation;
-import com.thoughtworks.qdox.model.JavaClass;
-import com.thoughtworks.qdox.model.expression.AnnotationValue;
-import edu.stanford.webprotege.shared.annotations.Portlet;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -19,8 +15,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
+
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Matthew Horridge
@@ -51,11 +48,12 @@ public class WebProtegeMojo extends AbstractMojo {
             JavaProjectBuilder builder = new JavaProjectBuilder();
             builder.setErrorHandler(e -> getLog().info("[WebProtegeMojo] Couldn't parse file: " + e));
             builder.addSourceTree(new File(sourceRoot));
-            Set<PortletTypeDescriptor> descriptors = getPortletTypeDescriptors(builder);
-            getLog().info("[WebProtegeMojo]  Portlets:");
-            for(PortletTypeDescriptor d : descriptors) {
-                getLog().info("[WebProtegeMojo]        " + d);
-            }
+            AnnotatedPortletClassExtractor extractor = new AnnotatedPortletClassExtractor(builder);
+            Set<AnnotatedPortletClass> portletClasses = extractor.findAnnotatedPortletClasses();
+            Set<PortletTypeDescriptor> descriptors = portletClasses.stream()
+                    .map(c -> new PortletTypeDescriptorBuilder(c.getJavaClass(), c.getJavaAnnotation()).build())
+                    .collect(toSet());
+            logPortletDescriptors(descriptors);
             WebProtegeCodeGeneratorVelocityImpl gen = new WebProtegeCodeGeneratorVelocityImpl(descriptors, getSourceWriter());
             gen.generate();
         } catch (Exception e) {
@@ -88,20 +86,28 @@ public class WebProtegeMojo extends AbstractMojo {
         return Paths.get(file.getAbsolutePath(), "target", "generated-sources", "webprotege");
     }
 
-    private Set<PortletTypeDescriptor> getPortletTypeDescriptors(JavaProjectBuilder builder) {
-        Set<PortletTypeDescriptor> portletTypeDescriptors = new HashSet<>();
-        for(JavaClass cls : builder.getClasses()) {
-            for(JavaAnnotation anno : cls.getAnnotations()) {
-                if(anno.getType().getCanonicalName().equals(Portlet.class.getName())) {
-                    getLog().info("[WebProtegeMojo] Found Portlet: " + cls.getCanonicalName());
-                    PortletTypeDescriptorBuilder b = new PortletTypeDescriptorBuilder(
-                            cls, anno
-                    );
-                    portletTypeDescriptors.add(b.build());
 
-                }
-            }
+    private void logPortletDescriptors(Set<PortletTypeDescriptor> descriptors) {
+        getLog().info("[WebProtegeMojo]  Portlets:");
+        for(PortletTypeDescriptor d : descriptors) {
+            getLog().info("[WebProtegeMojo]        " + d);
         }
-        return portletTypeDescriptors;
     }
+
+//    private Set<PortletTypeDescriptor> getPortletTypeDescriptors(JavaProjectBuilder builder) {
+//        Set<PortletTypeDescriptor> portletTypeDescriptors = new HashSet<>();
+//        for(JavaClass cls : builder.getClasses()) {
+//            for(JavaAnnotation anno : cls.getAnnotations()) {
+//                if(anno.getType().getCanonicalName().equals(Portlet.class.getName())) {
+//                    getLog().info("[WebProtegeMojo] Found Portlet: " + cls.getCanonicalName());
+//                    PortletTypeDescriptorBuilder b = new PortletTypeDescriptorBuilder(
+//                            cls, anno
+//                    );
+//                    portletTypeDescriptors.add(b.build());
+//
+//                }
+//            }
+//        }
+//        return portletTypeDescriptors;
+//    }
 }
