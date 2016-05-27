@@ -93,21 +93,4 @@ public class WebProtegeMojo extends AbstractMojo {
             getLog().info("[WebProtegeMojo]        " + d);
         }
     }
-
-//    private Set<PortletTypeDescriptor> getPortletTypeDescriptors(JavaProjectBuilder builder) {
-//        Set<PortletTypeDescriptor> portletTypeDescriptors = new HashSet<>();
-//        for(JavaClass cls : builder.getClasses()) {
-//            for(JavaAnnotation anno : cls.getAnnotations()) {
-//                if(anno.getType().getCanonicalName().equals(Portlet.class.getName())) {
-//                    getLog().info("[WebProtegeMojo] Found Portlet: " + cls.getCanonicalName());
-//                    PortletTypeDescriptorBuilder b = new PortletTypeDescriptorBuilder(
-//                            cls, anno
-//                    );
-//                    portletTypeDescriptors.add(b.build());
-//
-//                }
-//            }
-//        }
-//        return portletTypeDescriptors;
-//    }
 }
