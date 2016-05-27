@@ -37,7 +37,7 @@ public class AnnotatedPortletClass {
     }
 
     /**
-     * Gets the portle annotation.
+     * Gets the portlet annotation.
      * @return The annotation.
      */
     public JavaAnnotation getJavaAnnotation() {
