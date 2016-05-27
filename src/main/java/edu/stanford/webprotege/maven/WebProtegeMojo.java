@@ -45,13 +45,14 @@ public class WebProtegeMojo extends AbstractMojo {
 
     private void processCompileSourceRoot(String sourceRoot) throws IOException {
         try {
-            JavaProjectBuilder builder = new JavaProjectBuilder();
-            builder.setErrorHandler(e -> getLog().info("[WebProtegeMojo] Couldn't parse file: " + e));
-            builder.addSourceTree(new File(sourceRoot));
+            JavaProjectBuilder builder = getProjectBuilder(sourceRoot);
             AnnotatedPortletClassExtractor extractor = new AnnotatedPortletClassExtractor(builder);
             Set<AnnotatedPortletClass> portletClasses = extractor.findAnnotatedPortletClasses();
             Set<PortletTypeDescriptor> descriptors = portletClasses.stream()
-                    .map(c -> new PortletTypeDescriptorBuilder(c.getJavaClass(), c.getJavaAnnotation()).build())
+                    .map(c -> new PortletTypeDescriptorBuilder(
+                            c.getJavaClass(),
+                            c.getJavaAnnotation()).build()
+                    )
                     .collect(toSet());
             logPortletDescriptors(descriptors);
             WebProtegeCodeGeneratorVelocityImpl gen = new WebProtegeCodeGeneratorVelocityImpl(descriptors, getSourceWriter());
@@ -60,6 +61,13 @@ public class WebProtegeMojo extends AbstractMojo {
             getLog().error(e);
         }
 
+    }
+
+    private JavaProjectBuilder getProjectBuilder(String sourceRoot) {
+        JavaProjectBuilder builder = new JavaProjectBuilder();
+        builder.setErrorHandler(e -> getLog().info("[WebProtegeMojo] Couldn't parse file: " + e));
+        builder.addSourceTree(new File(sourceRoot));
+        return builder;
     }
 
     private WebProtegeCodeGeneratorVelocityImpl.SourceWriter getSourceWriter() throws IOException {
