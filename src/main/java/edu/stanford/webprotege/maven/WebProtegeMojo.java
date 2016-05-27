@@ -94,17 +94,10 @@ public class WebProtegeMojo extends AbstractMojo {
             for(JavaAnnotation anno : cls.getAnnotations()) {
                 if(anno.getType().getCanonicalName().equals(Portlet.class.getName())) {
                     getLog().info("[WebProtegeMojo] Found Portlet: " + cls.getCanonicalName());
-                    AnnotationValue id = anno.getProperty("id");
-                    AnnotationValue title = anno.getProperty("title");
-                    AnnotationValue tooltip = anno.getProperty("tooltip");
-                    PortletTypeDescriptor descriptor = new PortletTypeDescriptor(
-                            cls.getCanonicalName(),
-                            cls.getName(),
-                            cls.getPackageName(),
-                            annotationValueToString(id),
-                            annotationValueToString(title),
-                            annotationValueToString(tooltip));
-                    portletTypeDescriptors.add(descriptor);
+                    PortletTypeDescriptorBuilder b = new PortletTypeDescriptorBuilder(
+                            cls, anno
+                    );
+                    portletTypeDescriptors.add(b.build());
 
                 }
             }
