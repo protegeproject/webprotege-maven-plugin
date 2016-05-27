@@ -18,16 +18,28 @@ public class AnnotatedPortletClass {
 
     private final JavaAnnotation javaAnnotation;
 
-
+    /**
+     * Constructs a description of a Java class annotated with a portlet class.
+     * @param javaClass The annotated Java class.
+     * @param javaAnnotation The portlet annotation.
+     */
     public AnnotatedPortletClass(JavaClass javaClass, JavaAnnotation javaAnnotation) {
         this.javaClass = checkNotNull(javaClass);
         this.javaAnnotation = checkNotNull(javaAnnotation);
     }
 
+    /**
+     * Gets the annotated Java class.
+     * @return The class.
+     */
     public JavaClass getJavaClass() {
         return javaClass;
     }
 
+    /**
+     * Gets the portle annotation.
+     * @return The annotation.
+     */
     public JavaAnnotation getJavaAnnotation() {
         return javaAnnotation;
     }
