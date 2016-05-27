@@ -104,17 +104,4 @@ public class WebProtegeMojo extends AbstractMojo {
         }
         return portletTypeDescriptors;
     }
-
-    private static String annotationValueToString(AnnotationValue annotationValue) {
-        if(annotationValue == null) {
-            return "";
-        }
-        else if(annotationValue.getParameterValue() instanceof String) {
-            String parameterValue = (String) annotationValue.getParameterValue();
-            return parameterValue.substring(1, parameterValue.length() - 1);
-        }
-        else {
-            return annotationValue.getParameterValue().toString();
-        }
-    }
 }
