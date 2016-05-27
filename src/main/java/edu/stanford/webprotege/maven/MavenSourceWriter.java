@@ -48,7 +48,6 @@ public class MavenSourceWriter implements SourceWriter {
         Path classFilePath = packagePath.resolve(simpleClassName + ".java");
         try(OutputStream os = Files.newOutputStream(classFilePath)) {
             os.write(source.getBytes(Charsets.UTF_8));
-            os.close();
         }
         String extraSourceRoot = outputDirectory.toAbsolutePath().toString();
         if(!mavenProject.getCompileSourceRoots().contains(extraSourceRoot)) {
