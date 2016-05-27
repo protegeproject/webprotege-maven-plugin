@@ -1,6 +1,5 @@
 package edu.stanford.webprotege.maven;
 
-import com.google.common.base.Charsets;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -12,8 +11,6 @@ import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Set;
 
