@@ -1,14 +1,11 @@
 package edu.stanford.webprotege.maven;
 
 import com.thoughtworks.qdox.JavaProjectBuilder;
-import com.thoughtworks.qdox.model.JavaAnnotation;
-import com.thoughtworks.qdox.model.JavaClass;
-import edu.stanford.webprotege.shared.annotations.Portlet;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Matthew Horridge
@@ -24,14 +21,12 @@ public class AnnotatedPortletClassExtractor {
     }
 
     public Set<AnnotatedPortletClass> findAnnotatedPortletClasses() {
-        Set<AnnotatedPortletClass> result = new HashSet<>();
-        for(JavaClass cls : projectBuilder.getClasses()) {
-            for(JavaAnnotation anno : cls.getAnnotations()) {
-                if(anno.getType().getCanonicalName().equals(Portlet.class.getName())) {
-                    result.add(new AnnotatedPortletClass(cls, anno));
-                }
-            }
-        }
-        return result;
+        return projectBuilder.getClasses().stream()
+                .flatMap(
+                        c -> c.getAnnotations().stream()
+                                .filter(Annotations::isPortletAnnotation)
+                                .map(a -> new AnnotatedPortletClass(c, a))
+                )
+                .collect(toSet());
     }
 }
