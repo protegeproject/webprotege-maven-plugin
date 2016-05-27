@@ -70,7 +70,7 @@ public class WebProtegeMojo extends AbstractMojo {
         return builder;
     }
 
-    private WebProtegeCodeGeneratorVelocityImpl.SourceWriter getSourceWriter() throws IOException {
+    private SourceWriter getSourceWriter() throws IOException {
         return (packageName, className, source) -> {
             Path generatedSourcesDirectory = getOutputDirectory();
             String packagePathName = packageName.replace(".", "/");

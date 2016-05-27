@@ -30,11 +30,6 @@ public class WebProtegeCodeGeneratorVelocityImpl {
 
     private static final String CLASSPATH_RESOURCE_LOADER_CLASS = "classpath.resource.loader.class";
 
-    public static interface SourceWriter {
-
-        void writeSource(String packageName, String className, String source) throws IOException;
-    }
-
 
     private Set<PortletTypeDescriptor> descriptors;
 
