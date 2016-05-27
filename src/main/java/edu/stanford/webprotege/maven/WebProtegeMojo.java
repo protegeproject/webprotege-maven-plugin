@@ -55,7 +55,7 @@ public class WebProtegeMojo extends AbstractMojo {
                     )
                     .collect(toSet());
             logPortletDescriptors(descriptors);
-            WebProtegeCodeGeneratorVelocityImpl gen = new WebProtegeCodeGeneratorVelocityImpl(descriptors, getSourceWriter());
+            WebProtegeCodeGeneratorVelocityImpl gen = new WebProtegeCodeGeneratorVelocityImpl(descriptors, new MavenSourceWriter(project, getLog()));
             gen.generate();
         } catch (Exception e) {
             getLog().error(e);
@@ -69,31 +69,6 @@ public class WebProtegeMojo extends AbstractMojo {
         builder.addSourceTree(new File(sourceRoot));
         return builder;
     }
-
-    private SourceWriter getSourceWriter() throws IOException {
-        return (packageName, className, source) -> {
-            Path generatedSourcesDirectory = getOutputDirectory();
-            String packagePathName = packageName.replace(".", "/");
-            Path packagePath = generatedSourcesDirectory.resolve(packagePathName);
-            Files.createDirectories(packagePath);
-            Path classFilePath = packagePath.resolve(className + ".java");
-            try(OutputStream os = Files.newOutputStream(classFilePath)) {
-                os.write(source.getBytes(Charsets.UTF_8));
-                os.close();
-            }
-            String extraSourceRoot = generatedSourcesDirectory.toAbsolutePath().toString();
-            if(!project.getCompileSourceRoots().contains(extraSourceRoot)) {
-                getLog().info("[WebProtegeMojo] Adding source root for generated sources: " + extraSourceRoot);
-                project.addCompileSourceRoot(extraSourceRoot);
-            }
-        };
-    }
-
-    private Path getOutputDirectory() {
-        File file = project.getBasedir();
-        return Paths.get(file.getAbsolutePath(), "target", "generated-sources", "webprotege");
-    }
-
 
     private void logPortletDescriptors(Set<PortletTypeDescriptor> descriptors) {
         getLog().info("[WebProtegeMojo]  Portlets:");
