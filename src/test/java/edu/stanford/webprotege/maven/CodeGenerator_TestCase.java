@@ -30,7 +30,6 @@ public class CodeGenerator_TestCase {
     public void setUp() throws Exception {
         SourceWriter sourceWriter = (packageName, simpleClassName, source) -> {
             try {
-                System.out.println(source);
                 JavaParser.parse(new StringReader(source), true);
             } catch (ParseException e) {
                 // Source code failed to parse.  Throw an exception that will cause the test to fail.
