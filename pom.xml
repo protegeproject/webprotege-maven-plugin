@@ -4,7 +4,7 @@
 
     <groupId>edu.stanford.protege</groupId>
     <artifactId>webprotege-maven-plugin</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>webprotege-maven-plugin</name>
 
@@ -38,7 +38,7 @@
         <connection>scm:git:git@github.com:protegeproject/webprotege-maven-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:protegeproject/webprotege-maven-plugin.git</developerConnection>
         <url>https://github.com/protegeproject/webprotege-maven-plugin</url>
-        <tag>v1.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
