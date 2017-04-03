@@ -10,9 +10,10 @@ import edu.stanford.bmir.protege.web.shared.PortletId;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import javax.inject.Provider;
-import edu.stanford.bmir.protege.web.client.portlet.WebProtegePortlet;
+import edu.stanford.bmir.protege.web.client.portlet.WebProtegePortletPresenter;
+import edu.stanford.bmir.protege.web.client.portlet.WebProtegePortletComponents;
 
 import javax.inject.Inject;
 
@@ -37,7 +38,7 @@ import $pkg.*;
  */
 public class PortletFactoryGenerated implements PortletFactory {
 
-    private final Map<PortletId, Provider<? extends WebProtegePortlet>> id2PresenterMap = new HashMap<>();
+    private final Map<PortletId, Provider<? extends WebProtegePortletPresenter>> id2PresenterMap = new HashMap<>();
 
     private final Map<PortletId, PortletDescriptor> id2DescriptorMap = new HashMap<>();
 
@@ -65,7 +66,7 @@ public class PortletFactoryGenerated implements PortletFactory {
         #end
     }
 
-    private void addPortlet(PortletDescriptor portletDesciptor, Provider<? extends WebProtegePortlet> provider) {
+    private void addPortlet(PortletDescriptor portletDesciptor, Provider<? extends WebProtegePortletPresenter> provider) {
         id2PresenterMap.put(portletDesciptor.getPortletId(), provider);
         id2DescriptorMap.put(portletDesciptor.getPortletId(), portletDesciptor);
         porletDescriptorList.add(portletDesciptor);
@@ -75,18 +76,17 @@ public class PortletFactoryGenerated implements PortletFactory {
         return new ArrayList<>(porletDescriptorList);
     }
 
-    public Optional<WebProtegePortlet> createPortlet(PortletId portletId) {
+    public Optional<WebProtegePortletComponents> createPortlet(PortletId portletId) {
         checkNotNull(portletId);
         GWT.log("[PortletFactoryGenerated] Get portlet: " + portletId);
-        Provider<? extends WebProtegePortlet> portletProvider = id2PresenterMap.get(portletId);
+        Provider<? extends WebProtegePortletPresenter> portletProvider = id2PresenterMap.get(portletId);
         if (portletProvider == null) {
-            return Optional.absent();
+            return Optional.empty();
         }
         else {
-            WebProtegePortlet portlet = portletProvider.get();
+            WebProtegePortletPresenter portlet = portletProvider.get();
             PortletDescriptor portletDescriptor = id2DescriptorMap.get(portletId);
-            portlet.setTitle(portletDescriptor.getTitle());
-            return Optional.of(portlet);
+            return Optional.of(new WebProtegePortletComponents(portlet, portletDescriptor));
         }
     }
 }
