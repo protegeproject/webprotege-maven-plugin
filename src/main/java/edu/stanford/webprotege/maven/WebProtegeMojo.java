@@ -52,7 +52,13 @@ public class WebProtegeMojo extends AbstractMojo {
                     )
                     .collect(toSet());
             logPortletDescriptors(descriptors);
-            WebProtegeCodeGeneratorVelocityImpl gen = new WebProtegeCodeGeneratorVelocityImpl(descriptors, new MavenSourceWriter(project, getLog()));
+
+            AnnotatedPortletModuleClassExtractor moduleClassExtractor = new AnnotatedPortletModuleClassExtractor(builder);
+            Set<PortletModuleDescriptor> moduleDescriptors = moduleClassExtractor.findAnnotatedProjectModulePlugins();
+            WebProtegeCodeGeneratorVelocityImpl gen = new WebProtegeCodeGeneratorVelocityImpl(
+                    descriptors,
+                    moduleDescriptors,
+                    new MavenSourceWriter(project, getLog()));
             gen.generate();
         } catch (Exception e) {
             getLog().error(e);

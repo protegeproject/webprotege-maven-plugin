@@ -1,7 +1,7 @@
 package edu.stanford.webprotege.maven;
 
 import com.thoughtworks.qdox.model.JavaAnnotation;
-import edu.stanford.webprotege.shared.annotations.Portlet;
+import edu.stanford.webprotege.shared.annotations.*;
 
 /**
  * Matthew Horridge
@@ -17,5 +17,15 @@ public class Annotations {
      */
     public static boolean isPortletAnnotation(JavaAnnotation annotation) {
         return annotation.getType().getCanonicalName().equals(Portlet.class.getName());
+    }
+
+    /**
+     * Determines if the specified {@link JavaAnnotation} is a ProjectModule annotation.
+     * @param annotation The annotation.
+     * @return true if the specified annotation is a {@link ProjectModule} annotation,
+     * otherwise false.
+     */
+    public static boolean isProjectModuleAnnotation(JavaAnnotation annotation) {
+        return annotation.getType().getCanonicalName().equals(PortletModule.class.getName());
     }
 }

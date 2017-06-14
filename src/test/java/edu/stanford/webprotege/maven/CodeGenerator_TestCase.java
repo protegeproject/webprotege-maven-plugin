@@ -2,11 +2,10 @@ package edu.stanford.webprotege.maven;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
-import org.apache.commons.lang.StringEscapeUtils;
+import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
@@ -43,8 +42,11 @@ public class CodeGenerator_TestCase {
                 "my.portlet.id",
                 "My Portlet\"\"!",
                 "My amazing portlet.\n(Does all \"sorts\" of things)");
+        PortletModuleDescriptor moduleDescriptorA = new PortletModuleDescriptor("edu.stanford.protege.MyPortletModuleA");
+        PortletModuleDescriptor moduleDescriptorB = new PortletModuleDescriptor("edu.stanford.protege.MyPortletModuleB");
         codeGenerator = new WebProtegeCodeGeneratorVelocityImpl(
                 Collections.singleton(descriptor),
+                Sets.newHashSet(moduleDescriptorA, moduleDescriptorB),
                 sourceWriter
         );
     }

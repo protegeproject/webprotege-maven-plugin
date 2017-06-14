@@ -9,6 +9,7 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -26,6 +27,8 @@ public class WebProtegeCodeGeneratorVelocityImpl {
 
     private static final String DESCRIPTORS = "descriptors";
 
+    private static final String MODULE_DESCRIPTORS = "moduleDescriptors";
+
     private static final String IMPORTED_PACKAGES = "importedPackages";
 
     private static final String CLASSPATH_RESOURCE_LOADER_CLASS = "classpath.resource.loader.class";
@@ -33,10 +36,15 @@ public class WebProtegeCodeGeneratorVelocityImpl {
 
     private Set<PortletTypeDescriptor> descriptors;
 
+    private Set<PortletModuleDescriptor> moduleDescriptors;
+
     private SourceWriter sourceWriter;
 
-    public WebProtegeCodeGeneratorVelocityImpl(Set<PortletTypeDescriptor> descriptors, SourceWriter sourceWriter) {
+    public WebProtegeCodeGeneratorVelocityImpl(Set<PortletTypeDescriptor> descriptors,
+                                               Set<PortletModuleDescriptor> moduleDescriptors,
+                                               SourceWriter sourceWriter) {
         this.descriptors = new TreeSet<>(checkNotNull(descriptors));
+        this.moduleDescriptors = new HashSet<>(checkNotNull(moduleDescriptors));
         this.sourceWriter = checkNotNull(sourceWriter);
     }
 
@@ -54,11 +62,12 @@ public class WebProtegeCodeGeneratorVelocityImpl {
 
         VelocityContext context = new VelocityContext();
         context.put(DESCRIPTORS, descriptors);
+        context.put(MODULE_DESCRIPTORS, moduleDescriptors);
         context.put(IMPORTED_PACKAGES, getImportedPackages());
         context.put("date", new Date().toString());
 
         generateSource("PortletFactoryGenerated", PACKAGE_NAME, engine, context);
-        generateSource("PortletFactoryModuleGenerated", PACKAGE_NAME, engine, context);
+        generateSource("PortletModulesGenerated", PACKAGE_NAME, engine, context);
     }
 
 

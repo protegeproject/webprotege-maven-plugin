@@ -6,6 +6,10 @@ package edu.stanford.bmir.protege.web.client.portlet;
 import ${moduleDesc.moduleFullyQualifiedClassName};
 #end
 
-@dagger.Module
-public class PortletFactoryModuleGenerated {
+@dagger.Module(includes = {
+    #foreach(${moduleDesc} in ${moduleDescriptors})
+        ${moduleDesc.moduleFullyQualifiedClassName}.class #if( $foreach.hasNext ), #end
+    #end
+})
+public class PortletModulesGenerated {
 }
