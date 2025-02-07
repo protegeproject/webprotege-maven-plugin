@@ -1,12 +1,11 @@
 package edu.stanford.webprotege.maven;
 
 import org.apache.maven.plugin.logging.Log;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -20,31 +19,29 @@ import static org.mockito.Mockito.mock;
  * Stanford Center for Biomedical Informatics Research
  * 2018-11-09
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class WebProtegeMavenPluginBuildProperties_TestCase {
 
     private static final long TIMESTAMP = 3000L;
 
-    @Rule
-    public TemporaryFolder tempDirectory = new TemporaryFolder();
+    @TempDir
+    public Path tempDirectory;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
     }
 
     @Test
     public void shouldProvideDefaultTimestamp() {
-        Path path = tempDirectory.getRoot().toPath();
-        WebProtegeMavenPluginBuildProperties props = WebProtegeMavenPluginBuildProperties.get(path, mock(Log.class));
+        WebProtegeMavenPluginBuildProperties props = WebProtegeMavenPluginBuildProperties.get(tempDirectory, mock(Log.class));
         assertThat(props.getTimestamp(), is(0L));
     }
 
     @Test
     public void shouldSaveAndLoadTimestamp() {
-        Path path = tempDirectory.getRoot().toPath();
-        WebProtegeMavenPluginBuildProperties props = WebProtegeMavenPluginBuildProperties.get(path, mock(Log.class));
+        WebProtegeMavenPluginBuildProperties props = WebProtegeMavenPluginBuildProperties.get(tempDirectory, mock(Log.class));
         props.setTimestamp(TIMESTAMP);
-        WebProtegeMavenPluginBuildProperties propsB = WebProtegeMavenPluginBuildProperties.get(path, mock(Log.class));
+        WebProtegeMavenPluginBuildProperties propsB = WebProtegeMavenPluginBuildProperties.get(tempDirectory, mock(Log.class));
         long loadedTimestamp = propsB.getTimestamp();
         assertThat(loadedTimestamp, is(TIMESTAMP));
     }

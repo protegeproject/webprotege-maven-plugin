@@ -3,15 +3,16 @@ package edu.stanford.webprotege.maven;
 import com.thoughtworks.qdox.model.JavaAnnotation;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.expression.AnnotationValue;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -19,7 +20,8 @@ import static org.mockito.Mockito.when;
  * Stanford Center for Biomedical Informatics Research
  * 26 May 16
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class PortletTypeDescriptorBuilder_TestCase {
 
     public static final String CANONICAL_CLASS_NAME = "CANONICAL_CLASS_NAME";
@@ -46,7 +48,7 @@ public class PortletTypeDescriptorBuilder_TestCase {
 
     private PortletTypeDescriptorBuilder builder;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(cls.getCanonicalName()).thenReturn(CANONICAL_CLASS_NAME);
         when(cls.getPackageName()).thenReturn(PACKAGE_NAME);

@@ -4,21 +4,22 @@ package edu.stanford.webprotege.maven;
 import com.thoughtworks.qdox.model.JavaAnnotation;
 import com.thoughtworks.qdox.model.JavaClass;
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.NullPointerException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AnnotatedPortletClass_TestCase {
+@ExtendWith(MockitoExtension.class)
+class AnnotatedPortletClass_TestCase {
 
     private AnnotatedPortletClass annotatedPortletClass;
 
@@ -28,14 +29,16 @@ public class AnnotatedPortletClass_TestCase {
     @Mock
     private JavaAnnotation javaAnnotation;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         annotatedPortletClass = new AnnotatedPortletClass(javaClass, javaAnnotation);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldThrowNullPointerExceptionIf_javaClass_IsNull() {
-        new AnnotatedPortletClass(null, javaAnnotation);
+        assertThrows(NullPointerException.class, () -> {
+            new AnnotatedPortletClass(null, javaAnnotation);
+        });
     }
 
     @Test
@@ -43,9 +46,11 @@ public class AnnotatedPortletClass_TestCase {
         assertThat(annotatedPortletClass.getJavaClass(), is(this.javaClass));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldThrowNullPointerExceptionIf_javaAnnotation_IsNull() {
-        new AnnotatedPortletClass(javaClass, null);
+        assertThrows(NullPointerException.class, () -> {
+            new AnnotatedPortletClass(javaClass, null);
+        });
     }
 
     @Test

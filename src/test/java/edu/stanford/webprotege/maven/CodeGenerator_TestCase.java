@@ -3,10 +3,10 @@ package edu.stanford.webprotege.maven;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.google.common.collect.Sets;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -20,12 +20,12 @@ import java.util.Collections;
  * An integration test for the code generator, although
  * this is fast enough to run as a unit test.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CodeGenerator_TestCase {
 
     private WebProtegeCodeGeneratorVelocityImpl codeGenerator;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         SourceWriter sourceWriter = (packageName, simpleClassName, source) -> {
             try {
