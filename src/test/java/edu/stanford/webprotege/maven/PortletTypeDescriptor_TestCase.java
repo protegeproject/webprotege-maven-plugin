@@ -2,18 +2,19 @@
 package edu.stanford.webprotege.maven;
 
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.NullPointerException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class PortletTypeDescriptor_TestCase {
 
     private PortletTypeDescriptor portletTypeDescriptor;
@@ -24,15 +25,17 @@ public class PortletTypeDescriptor_TestCase {
     private String title = "The \\u000Atitle";
     private String tooltip = "The \\u000tooltip";
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         portletTypeDescriptor = new PortletTypeDescriptor(canonicalClassName, simpleName, packageName, id, title, tooltip);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldThrowNullPointerExceptionIf_canonicalClassName_IsNull() {
-        new PortletTypeDescriptor(null, simpleName, packageName, id, title, tooltip);
+        assertThrows(NullPointerException.class, () -> {
+            new PortletTypeDescriptor(null, simpleName, packageName, id, title, tooltip);
+        });
     }
 
     @Test
@@ -40,9 +43,11 @@ public class PortletTypeDescriptor_TestCase {
         assertThat(portletTypeDescriptor.getCanonicalClassName(), is(this.canonicalClassName));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldThrowNullPointerExceptionIf_simpleName_IsNull() {
-        new PortletTypeDescriptor(canonicalClassName, null, packageName, id, title, tooltip);
+        assertThrows(NullPointerException.class, () -> {
+            new PortletTypeDescriptor(canonicalClassName, null, packageName, id, title, tooltip);
+        });
     }
 
     @Test
@@ -50,9 +55,11 @@ public class PortletTypeDescriptor_TestCase {
         assertThat(portletTypeDescriptor.getSimpleName(), is(this.simpleName));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldThrowNullPointerExceptionIf_packageName_IsNull() {
-        new PortletTypeDescriptor(canonicalClassName, simpleName, null, id, title, tooltip);
+        assertThrows(NullPointerException.class, () -> {
+            new PortletTypeDescriptor(canonicalClassName, simpleName, null, id, title, tooltip);
+        });
     }
 
     @Test
@@ -60,9 +67,11 @@ public class PortletTypeDescriptor_TestCase {
         assertThat(portletTypeDescriptor.getPackageName(), is(this.packageName));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldThrowNullPointerExceptionIf_id_IsNull() {
-        new PortletTypeDescriptor(canonicalClassName, simpleName, packageName, null, title, tooltip);
+        assertThrows(NullPointerException.class, () -> {
+            new PortletTypeDescriptor(canonicalClassName, simpleName, packageName, null, title, tooltip);
+        });
     }
 
     @Test
@@ -70,9 +79,11 @@ public class PortletTypeDescriptor_TestCase {
         assertThat(portletTypeDescriptor.getId(), is(this.id));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldThrowNullPointerExceptionIf_title_IsNull() {
-        new PortletTypeDescriptor(canonicalClassName, simpleName, packageName, id, null, tooltip);
+        assertThrows(NullPointerException.class, () -> {
+            new PortletTypeDescriptor(canonicalClassName, simpleName, packageName, id, null, tooltip);
+        });
     }
 
     @Test
@@ -84,9 +95,11 @@ public class PortletTypeDescriptor_TestCase {
         assertThat(portletTypeDescriptor.getEscapedTitle(), is("The \ntitle"));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldThrowNullPointerExceptionIf_tooltip_IsNull() {
-        new PortletTypeDescriptor(canonicalClassName, simpleName, packageName, id, title, null);
+        assertThrows(NullPointerException.class, () -> {
+            new PortletTypeDescriptor(canonicalClassName, simpleName, packageName, id, title, null);
+        });
     }
 
     @Test

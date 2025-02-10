@@ -4,12 +4,11 @@ import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaAnnotation;
 import com.thoughtworks.qdox.model.JavaClass;
 import edu.stanford.webprotege.shared.annotations.Portlet;
-import org.apache.maven.plugin.logging.Log;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,7 +23,7 @@ import static org.mockito.Mockito.when;
  * Stanford Center for Biomedical Informatics Research
  * 27 May 16
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AnnotatedPortletClassExtractor_TestCase {
 
 
@@ -42,7 +41,7 @@ public class AnnotatedPortletClassExtractor_TestCase {
     @Mock
     private JavaClass portletAnnotationClass;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(projectBuilder.getClasses()).thenReturn(Collections.singleton(portletClass));
         when(portletClass.getAnnotations()).thenReturn(Arrays.asList(portletAnnotation));
