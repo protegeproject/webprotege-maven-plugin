@@ -1,6 +1,7 @@
 package edu.stanford.webprotege.maven;
 
 import com.thoughtworks.qdox.JavaProjectBuilder;
+import com.thoughtworks.qdox.model.JavaClass;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -35,7 +36,7 @@ public class WebProtegeMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
-            for(Object compileSourceRoot : new ArrayList<>(project.getCompileSourceRoots())) {
+            for (Object compileSourceRoot : new ArrayList<>(project.getCompileSourceRoots())) {
                 String sourceRoot = (String) compileSourceRoot;
                 processCompileSourceRoot(sourceRoot);
             }
@@ -49,14 +50,20 @@ public class WebProtegeMojo extends AbstractMojo {
     private void processCompileSourceRoot(String sourceRoot) throws IOException {
         try {
             JavaProjectBuilder builder = getProjectBuilder(sourceRoot);
+
             AnnotatedPortletClassExtractor extractor = new AnnotatedPortletClassExtractor(builder);
             Set<AnnotatedPortletClass> portletClasses = extractor.findAnnotatedPortletClasses();
+
+            AnnotatedEntityCardPresenterClassExtractor entityCardExtractor = new AnnotatedEntityCardPresenterClassExtractor(builder);
+            Set<AnnotatedEntityCardPresenterClass> entityCardPresenterClasses = entityCardExtractor.findAnnotatedEntityCardPresenterClasses();
+
             long lastBuildTimestamp = WebProtegeMavenPluginBuildProperties.get(project, getLog()).getTimestamp();
-            Set<AnnotatedPortletClass> modifiedDescriptors = new HashSet<>();
+
+            Set<Object> modifiedThings = new HashSet<>();
             Set<PortletTypeDescriptor> descriptors = portletClasses.stream()
                     .peek(d -> {
-                        if(isModifiedSinceLastBuild(lastBuildTimestamp, d)) {
-                            modifiedDescriptors.add(d);
+                        if (isModifiedSinceLastBuild(lastBuildTimestamp, d.getJavaClass())) {
+                            modifiedThings.add(d);
                         }
                     })
                     .map(c -> new PortletTypeDescriptorBuilder(
@@ -65,7 +72,25 @@ public class WebProtegeMojo extends AbstractMojo {
                     )
                     .collect(toSet());
             logPortletDescriptors(descriptors);
-            if(modifiedDescriptors.isEmpty()) {
+
+
+            Set<EntityCardPresenterClassDescriptor> entityCardDescriptors = entityCardPresenterClasses.stream()
+                    .peek(c -> {
+                        if (isModifiedSinceLastBuild(lastBuildTimestamp, c.javaClass())) {
+                            modifiedThings.add(c);
+                        }
+                    })
+                    .map(c -> new EntityCardPresenterClassDescriptor(
+                            c.javaClass().getPackageName(),
+                            c.javaClass().getCanonicalName(),
+                            c.javaClass().getName(),
+                            Util.annotationValueToString(c.javaAnnotation().getProperty("id")),
+                            Util.annotationValueToString(c.javaAnnotation().getProperty("title"))))
+                    .collect(toSet());
+            logEntityCardPresenters(entityCardDescriptors);
+
+            if(modifiedThings.isEmpty()) {
+                getLog().info("[WebProtegeMojo] No modifications since last build");
                 return;
             }
 
@@ -76,6 +101,15 @@ public class WebProtegeMojo extends AbstractMojo {
                     moduleDescriptors,
                     new MavenSourceWriter(project, getLog()));
             gen.generate();
+
+
+            EntityCardPresenterFactoryCodeGenerator gen2 = new EntityCardPresenterFactoryCodeGenerator(
+                    entityCardDescriptors,
+                    new HashSet<>(),
+                    new MavenSourceWriter(project, getLog())
+            );
+            gen2.generate();
+
         } catch (Exception e) {
             getLog().error(e);
         }
@@ -83,17 +117,17 @@ public class WebProtegeMojo extends AbstractMojo {
     }
 
     private boolean isModifiedSinceLastBuild(long lastBuildTimestamp,
-                                             AnnotatedPortletClass d) {
+                                             JavaClass d) {
         try {
-            var sourceUrl = d.getJavaClass().getSource().getURL();
+            var sourceUrl = d.getSource().getURL();
             File file = new File(sourceUrl.toURI());
             boolean modified = Files.getLastModifiedTime(file.toPath()).toInstant().getEpochSecond() > lastBuildTimestamp;
-            if(!modified) {
-                getLog().info("[WebProtege Mojo] " + d + " has not been modified since last build");
+            if (!modified) {
+                getLog().info("[WebProtegeMojo] " + d + " has not been modified since last build");
             }
             return modified;
-        } catch(URISyntaxException | IOException e) {
-            getLog().info("[WebProtege Mojo] Could not get source file: " + e.getMessage());
+        } catch (URISyntaxException | IOException e) {
+            getLog().info("[WebProtegeMojo] Could not get source file: " + e.getMessage());
             return true;
         }
     }
@@ -107,7 +141,14 @@ public class WebProtegeMojo extends AbstractMojo {
 
     private void logPortletDescriptors(Set<PortletTypeDescriptor> descriptors) {
         getLog().info("[WebProtegeMojo]  Portlets:");
-        for(PortletTypeDescriptor d : descriptors) {
+        for (PortletTypeDescriptor d : descriptors) {
+            getLog().info("[WebProtegeMojo]        " + d);
+        }
+    }
+
+    private void logEntityCardPresenters(Set<EntityCardPresenterClassDescriptor> descriptors) {
+        getLog().info("[WebProtegeMojo]  EntityCards:");
+        for (EntityCardPresenterClassDescriptor d : descriptors) {
             getLog().info("[WebProtegeMojo]        " + d);
         }
     }

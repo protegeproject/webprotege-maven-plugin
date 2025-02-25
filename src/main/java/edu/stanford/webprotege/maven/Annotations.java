@@ -28,4 +28,13 @@ public class Annotations {
     public static boolean isProjectModuleAnnotation(JavaAnnotation annotation) {
         return annotation.getType().getCanonicalName().equals(PortletModule.class.getName());
     }
+
+    /**
+     * Determines if the specified {@link JavaAnnotation} is a EntityCardPresenter annotation.
+     * @param javaAnnotation The annotation.
+     * @return true if the specified annotation is an EntityCardPresenter annotation, otherwise false.
+     */
+    public static boolean isEntityCardPresenterAnnotation(JavaAnnotation javaAnnotation) {
+        return javaAnnotation.getType().getCanonicalName().equals(Card.class.getName());
+    }
 }
